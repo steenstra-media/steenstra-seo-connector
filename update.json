@@ -1,0 +1,10 @@
+{
+  "version": "0.2.0",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.0.zip",
+  "sha256": "a2979c080e9cf1272de51615b4bf23f45de914884ff6c7d05c64d71ebad1c91e",
+  "requires": "6.0",
+  "requires_php": "7.4",
+  "tested": "7.1",
+  "released": "2026-10-09",
+  "changelog": "<p>0.2.0: Automatische updates via GitHub, publiceren en inplannen van eigen concepten, beoordeling standaard uit, API-antwoorden nooit gecachet</p>"
+}
