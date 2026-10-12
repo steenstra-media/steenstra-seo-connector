@@ -73,7 +73,37 @@ class SSC_API {
 			'require_review'    => self::require_review(),
 			'api_user'          => SSC_USER_LOGIN,
 			'post_types'        => array_values( get_post_types( array( 'public' => true ), 'names' ) ),
+			'authors'           => self::authors(),
 		);
+	}
+
+	/** Gebruikers die gepubliceerde content hebben, met aantallen (voor de keuze van de auteur). */
+	private static function authors() {
+		$out = array();
+		foreach ( get_users( array( 'has_published_posts' => array( 'post', 'page' ), 'fields' => array( 'ID', 'display_name' ) ) ) as $u ) {
+			if ( (int) $u->ID === (int) SSC_Setup::user_id() ) {
+				continue;
+			}
+			$out[] = array(
+				'id'           => (int) $u->ID,
+				'display_name' => $u->display_name,
+				'posts'        => (int) count_user_posts( $u->ID, 'post', true ),
+				'pages'        => (int) count_user_posts( $u->ID, 'page', true ),
+			);
+		}
+		usort( $out, function ( $a, $b ) { return ( $b['posts'] + $b['pages'] ) - ( $a['posts'] + $a['pages'] ); } );
+		return $out;
+	}
+
+	/** Auteur voor nieuwe content: een bestaande gebruiker met bewerkrechten (id), anders de API-gebruiker. */
+	private static function resolve_author( $value, $type ) {
+		$id = (int) $value;
+		if ( $id <= 0 ) {
+			return get_current_user_id();
+		}
+		$user = get_userdata( $id );
+		$cap  = 'page' === $type ? 'edit_pages' : 'edit_posts';
+		return ( $user && user_can( $user, $cap ) ) ? $id : new WP_Error( 'ssc_author', 'Auteur bestaat niet of mag geen ' . $type . ' bewerken.', array( 'status' => 400 ) );
 	}
 
 	/* ---------- pagina's ---------- */
@@ -187,6 +217,11 @@ class SSC_API {
 			'post_excerpt' => isset( $p['excerpt'] ) ? sanitize_textarea_field( $p['excerpt'] ) : '',
 			'post_author'  => get_current_user_id(),
 		);
+		$author = self::resolve_author( isset( $p['author'] ) ? $p['author'] : 0, $type );
+		if ( is_wp_error( $author ) ) {
+			return $author;
+		}
+		$postarr['post_author'] = $author;
 		if ( ! empty( $p['template'] ) ) {
 			$templates = wp_get_theme()->get_page_templates( null, $type );
 			if ( 'default' !== $p['template'] && ! isset( $templates[ $p['template'] ] ) ) {
@@ -198,6 +233,7 @@ class SSC_API {
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
+		update_post_meta( $post_id, '_ssc_created', 1 );
 
 		$errors = array();
 		foreach ( (array) ( isset( $p['acf'] ) ? $p['acf'] : array() ) as $selector => $value ) {
@@ -236,7 +272,8 @@ class SSC_API {
 		if ( ! $post || ! self::allowed_type( $post->post_type ) ) {
 			return new WP_Error( 'ssc_post', 'Pagina niet gevonden.', array( 'status' => 404 ) );
 		}
-		if ( (int) $post->post_author !== (int) SSC_Setup::user_id() ) {
+		$own = get_post_meta( $post->ID, '_ssc_created', true ) || (int) $post->post_author === (int) SSC_Setup::user_id();
+		if ( ! $own ) {
 			return new WP_Error( 'ssc_not_own', 'Alleen pagina\'s die via deze koppeling zijn aangemaakt.', array( 'status' => 403 ) );
 		}
 		if ( ! in_array( $post->post_status, array( 'draft', 'pending', 'auto-draft' ), true ) ) {
@@ -272,6 +309,7 @@ class SSC_API {
 		if ( is_wp_error( $r ) ) {
 			return $r;
 		}
+		SSC_Cache::purge( $post->ID );
 		$post = get_post( $post->ID );
 		return self::summary( $post );
 	}

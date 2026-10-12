@@ -53,6 +53,7 @@ class SSC_Changes {
 			return $result;
 		}
 		self::update( $id, array( 'status' => 'applied', 'old_value' => wp_json_encode( $old ) ) );
+		SSC_Cache::purge( $change->post_id );
 		return self::get( $id );
 	}
 
@@ -70,6 +71,7 @@ class SSC_Changes {
 			return $result;
 		}
 		self::update( $id, array( 'status' => 'reverted' ) );
+		SSC_Cache::purge( $change->post_id );
 		return self::get( $id );
 	}
 

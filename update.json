@@ -1,10 +1,10 @@
 {
-  "version": "0.2.0",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.0.zip",
-  "sha256": "a2979c080e9cf1272de51615b4bf23f45de914884ff6c7d05c64d71ebad1c91e",
+  "version": "0.2.1",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.1.zip",
+  "sha256": "b54d7b6ad4555bc2a5c47d1c85cb21cfdd2cb4be19d53bfbc87fd0b114fe4ea4",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
-  "released": "2026-10-09",
-  "changelog": "<p>0.2.0: Automatische updates via GitHub, publiceren en inplannen van eigen concepten, beoordeling standaard uit, API-antwoorden nooit gecachet</p>"
+  "released": "2026-10-12",
+  "changelog": "<p>0.2.1: Auteur kiezen bij nieuwe pagina's (bestaande gebruiker van de site), cache van alle gangbare cacheplugins legen na elke wijziging</p>"
 }
