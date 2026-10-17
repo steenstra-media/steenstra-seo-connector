@@ -257,6 +257,23 @@ class SSC_API {
 		if ( ! empty( $p['featured_media'] ) && 'attachment' === get_post_type( (int) $p['featured_media'] ) ) {
 			set_post_thumbnail( $post_id, (int) $p['featured_media'] );
 		}
+		// Termen (bijv. blogcategorie): { "category": [3], "post_tag": [7] }. Alleen bestaande termen van openbare taxonomieën van dit type.
+		foreach ( (array) ( isset( $p['terms'] ) ? $p['terms'] : array() ) as $tax => $ids ) {
+			$tax = sanitize_key( $tax );
+			$obj = get_taxonomy( $tax );
+			if ( ! $obj || ! $obj->public || ! in_array( $type, (array) $obj->object_type, true ) ) {
+				$errors[] = 'Taxonomie hoort niet bij dit type: ' . $tax;
+				continue;
+			}
+			$ids   = array_map( 'intval', (array) $ids );
+			$valid = array_values( array_filter( $ids, function ( $id ) use ( $tax ) { return (bool) term_exists( $id, $tax ); } ) );
+			if ( count( $valid ) !== count( $ids ) ) {
+				$errors[] = 'Onbekende term(en) in ' . $tax . ' overgeslagen';
+			}
+			if ( $valid ) {
+				wp_set_post_terms( $post_id, $valid, $tax, false );
+			}
+		}
 
 		$post             = get_post( $post_id );
 		$data             = self::summary( $post );
