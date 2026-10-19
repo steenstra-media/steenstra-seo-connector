@@ -23,6 +23,7 @@ class SSC_API {
 		self::route( "/changes/{$id}/reject", 'POST', 'reject_change' );
 		self::route( "/pages/{$id}/publish", 'POST', 'publish_page' );
 		self::route( "/pages/{$id}/trash", 'POST', 'trash_page' );
+		self::route( "/pages/{$id}/preview-link", 'POST', 'preview_link' );
 		self::route( '/media', 'POST', 'upload_media' );
 	}
 
@@ -329,6 +330,15 @@ class SSC_API {
 		SSC_Cache::purge( $post->ID );
 		$post = get_post( $post->ID );
 		return self::summary( $post );
+	}
+
+	/** Voorbeeldlink zonder login (7 dagen) voor een eigen concept. */
+	public static function preview_link( WP_REST_Request $request ) {
+		$post = self::own_draft( (int) $request['id'] );
+		if ( is_wp_error( $post ) ) {
+			return $post;
+		}
+		return SSC_Preview::create( $post->ID );
 	}
 
 	/** Eigen concept naar de prullenbak (bijv. mislukte of test-pagina). */

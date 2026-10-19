@@ -1,10 +1,10 @@
 {
-  "version": "0.2.2",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.2.zip",
-  "sha256": "72d5375484f84c8a02a2778100c285625253afd5f048d8c4f18be54779693a94",
+  "version": "0.2.3",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.3.zip",
+  "sha256": "650b81e847d9f57c6728b20cd69fbc0067450a259723f56e40a1cd894d81cfde",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
-  "released": "2026-10-17",
-  "changelog": "<p>0.2.2: Blogberichten in de juiste categorie zetten (termen bij het aanmaken)</p>"
+  "released": "2026-10-19",
+  "changelog": "<p>0.2.3: Voorbeeldlinks zonder login voor eigen concepten (7 dagen, noindex, nooit gecachet)</p>"
 }
