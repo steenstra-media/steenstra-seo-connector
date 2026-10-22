@@ -1,10 +1,10 @@
 {
-  "version": "0.2.3",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.2.3.zip",
-  "sha256": "650b81e847d9f57c6728b20cd69fbc0067450a259723f56e40a1cd894d81cfde",
+  "version": "0.3.0",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.0.zip",
+  "sha256": "7c7c302799583299c6b42e67540f5f414c74ce764d4b1c318a8c2c38cc4015d1",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
-  "released": "2026-10-19",
-  "changelog": "<p>0.2.3: Voorbeeldlinks zonder login voor eigen concepten (7 dagen, noindex, nooit gecachet)</p>"
+  "released": "2026-10-22",
+  "changelog": "<p>0.3.0: Elementor-ondersteuning: teksten en beelden in Elementor-pagina's lezen en wijzigen (met terugdraaien), Elementor-pagina als concept kopiëren met dezelfde opmaak</p>"
 }

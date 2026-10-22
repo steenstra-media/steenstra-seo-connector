@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Steenstra SEO Connector
  * Description:       Beveiligde API-koppeling voor SEO-beheer door Steenstra Media: pagina's, ACF-bouwblokken, SEO-titels en -omschrijvingen, schema en media. Alleen ondertekende aanvragen worden geaccepteerd.
- * Version:           0.2.3
+ * Version:           0.3.0
  * Author:            Steenstra Media
  * Author URI:        https://www.steenstramedia.nl/
  * Requires at least: 6.0
@@ -27,7 +27,7 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) || ! function_exists( 'sodium_cr
 	return;
 }
 
-define( 'SSC_VERSION', '0.2.3' );
+define( 'SSC_VERSION', '0.3.0' );
 define( 'SSC_FILE', __FILE__ );
 define( 'SSC_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -46,6 +46,7 @@ require_once SSC_DIR . 'includes/class-ssc-setup.php';
 require_once SSC_DIR . 'includes/class-ssc-auth.php';
 require_once SSC_DIR . 'includes/class-ssc-seo.php';
 require_once SSC_DIR . 'includes/class-ssc-acf.php';
+require_once SSC_DIR . 'includes/class-ssc-elementor.php';
 require_once SSC_DIR . 'includes/class-ssc-changes.php';
 require_once SSC_DIR . 'includes/class-ssc-schema.php';
 require_once SSC_DIR . 'includes/class-ssc-cache.php';

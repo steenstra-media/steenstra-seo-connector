@@ -6,11 +6,11 @@ defined( 'ABSPATH' ) || exit;
  * opgeslagen; pas bij "toepassen" komt ze op de site. Toegepaste wijzigingen
  * zijn terug te draaien met de bewaarde oude waarde.
  *
- * Types: title, content, acf, seo, schema, featured_media.
+ * Types: title, content, acf, seo, schema, featured_media, elementor (veld "<element-id>:<pad>").
  */
 class SSC_Changes {
 
-	const TYPES = array( 'title', 'content', 'acf', 'seo', 'schema', 'featured_media' );
+	const TYPES = array( 'title', 'content', 'acf', 'seo', 'schema', 'featured_media', 'elementor' );
 
 	/** @return array|WP_Error */
 	public static function propose( $post_id, $type, $field, $value, $note = '' ) {
@@ -157,6 +157,12 @@ class SSC_Changes {
 		if ( 'acf' === $type && ( ! SSC_ACF::active() || ! SSC_ACF::resolve_key( $field, $post_id ) ) ) {
 			return new WP_Error( 'ssc_acf_field', 'ACF-veld niet gevonden voor deze pagina: ' . $field, array( 'status' => 400 ) );
 		}
+		if ( 'elementor' === $type && ( ! SSC_Elementor::active( $post_id ) || ! SSC_Elementor::has( $post_id, $field ) ) ) {
+			return new WP_Error( 'ssc_elementor_field', 'Elementor-veld niet gevonden voor deze pagina: ' . $field, array( 'status' => 400 ) );
+		}
+		if ( 'content' === $type && SSC_Elementor::active( $post_id ) ) {
+			return new WP_Error( 'ssc_elementor_content', 'Deze pagina is met Elementor gebouwd: wijzig de tekst via type "elementor", niet via content.', array( 'status' => 400 ) );
+		}
 		return true;
 	}
 
@@ -175,6 +181,8 @@ class SSC_Changes {
 				return SSC_Schema::get( $post_id );
 			case 'featured_media':
 				return (int) get_post_thumbnail_id( $post_id );
+			case 'elementor':
+				return SSC_Elementor::get( $post_id, $field );
 		}
 		return null;
 	}
@@ -205,6 +213,8 @@ class SSC_Changes {
 				}
 				set_post_thumbnail( $post_id, (int) $value );
 				return true;
+			case 'elementor':
+				return SSC_Elementor::set( $post_id, $field, $value );
 		}
 		return new WP_Error( 'ssc_type', 'Onbekend wijzigingstype.', array( 'status' => 400 ) );
 	}

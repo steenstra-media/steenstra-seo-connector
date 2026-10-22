@@ -177,6 +177,7 @@ class SSC_API {
 		$data['featured_media'] = (int) get_post_thumbnail_id( $post );
 		$data['acf']            = SSC_ACF::values( $post->ID );
 		$data['schema']         = SSC_Schema::get( $post->ID );
+		$data['elementor']      = SSC_Elementor::active( $post->ID ) ? SSC_Elementor::fields( $post->ID ) : null;
 		$data['preview_link']   = get_preview_post_link( $post );
 		$data['edit_link']      = admin_url( 'post.php?post=' . $post->ID . '&action=edit' );
 		return $data;
@@ -195,7 +196,8 @@ class SSC_API {
 
 	/**
 	 * Nieuwe pagina, altijd als concept. Publiceren gebeurt handmatig in WordPress.
-	 * Body: title*, type, slug, parent, template, menu_order, content, excerpt, acf{}, seo{}, schema{}, featured_media
+	 * Body: title*, type, slug, parent, template, menu_order, content, excerpt, acf{}, seo{}, schema{}, featured_media,
+	 *       elementor_from (ID van een Elementor-modelpagina), elementor{ "<element-id>:<pad>": waarde }
 	 */
 	public static function create_page( WP_REST_Request $request ) {
 		$p     = $request->get_json_params();
@@ -237,6 +239,24 @@ class SSC_API {
 		update_post_meta( $post_id, '_ssc_created', 1 );
 
 		$errors = array();
+		if ( ! empty( $p['elementor_from'] ) ) {
+			$from = (int) $p['elementor_from'];
+			if ( ! current_user_can( 'edit_post', $from ) ) {
+				$errors[] = 'Geen rechten op de Elementor-modelpagina';
+			} else {
+				$r = SSC_Elementor::clone_to( $from, $post_id );
+				if ( is_wp_error( $r ) ) {
+					$errors[] = $r->get_error_message();
+				} elseif ( ! empty( $p['elementor'] ) && is_array( $p['elementor'] ) ) {
+					foreach ( $p['elementor'] as $field => $value ) {
+						$r = SSC_Elementor::set( $post_id, (string) $field, $value );
+						if ( is_wp_error( $r ) ) {
+							$errors[] = $r->get_error_message();
+						}
+					}
+				}
+			}
+		}
 		foreach ( (array) ( isset( $p['acf'] ) ? $p['acf'] : array() ) as $selector => $value ) {
 			$r = SSC_ACF::set( $selector, $value, $post_id );
 			if ( is_wp_error( $r ) ) {
