@@ -186,7 +186,29 @@ class SSC_Elementor {
 				update_post_meta( $to, '_wp_page_template', $tpl );
 			}
 		}
+		self::copy_layout_meta( $from, $to );
 		self::save( $to, self::data( $from ) );
 		return true;
+	}
+
+	/**
+	 * Pagina-instellingen van het thema (indeling, titel, transparante header, zijbalk) van het model overnemen.
+	 * Zonder deze meta staat een kopie op de thema-standaard: boxed, met paginatitel en gewone header (The Event Suite, Astra).
+	 * Alleen weergave-instellingen van bekende thema's; geen SEO-, Elementor- of interne velden.
+	 */
+	private static function copy_layout_meta( $from, $to ) {
+		$astra_exact = array( 'theme-transparent-header-meta', 'astra-migrate-meta-layouts', 'stick-header-meta', 'adv-header-id-meta', 'footer-sml-layout', 'footer-adv-display' );
+		$prefixes    = array( 'ast-', 'site-', 'header-above-', 'header-below-', 'header-main-', '_generate-', '_kad_', 'ocean_' );
+		foreach ( get_post_meta( $from ) as $key => $values ) {
+			$ok = in_array( $key, $astra_exact, true );
+			foreach ( $prefixes as $prefix ) {
+				$ok = $ok || 0 === strpos( $key, $prefix );
+			}
+			if ( ! $ok || 1 !== count( $values ) ) {
+				continue;
+			}
+			$v = maybe_unserialize( $values[0] );
+			update_post_meta( $to, $key, is_string( $v ) ? wp_slash( $v ) : $v );
+		}
 	}
 }

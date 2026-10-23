@@ -1,10 +1,10 @@
 {
-  "version": "0.3.2",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.2.zip",
-  "sha256": "327f5b33f9e247038c61fe5a3949ed15fc7f2ddff847fc8b21c84f8a3c29bb34",
+  "version": "0.3.3",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.3.zip",
+  "sha256": "899908ea84fdb40e09d26b1a66bb7d0dcc2bc381854749e99d797e4d34f18b09",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
   "released": "2026-10-23",
-  "changelog": "<p>0.3.2: FAQ-schema (JSON-LD-script) in de inhoud blijft behouden bij opslaan en terugdraaien; andere scripts worden geweigerd</p>"
+  "changelog": "<p>0.3.3: Elementor-kopie (elementor_from) neemt ook de pagina-instellingen van het thema over (Astra: indeling, titel, zijbalk, transparante header; ook GeneratePress, Kadence, OceanWP)</p>"
 }
