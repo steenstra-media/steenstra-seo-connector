@@ -232,7 +232,7 @@ class SSC_API {
 			}
 			$postarr['page_template'] = $p['template'];
 		}
-		$post_id = wp_insert_post( $postarr, true );
+		$post_id = wp_insert_post( wp_slash( $postarr ), true ); // wp_insert_post doet wp_unslash
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}
@@ -343,7 +343,7 @@ class SSC_API {
 				$args['post_status'] = 'future';
 			}
 		}
-		$r = wp_update_post( $args, true );
+		$r = wp_update_post( wp_slash( $args ), true ); // wp_update_post doet wp_unslash
 		if ( is_wp_error( $r ) ) {
 			return $r;
 		}

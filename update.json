@@ -1,10 +1,10 @@
 {
-  "version": "0.3.0",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.0.zip",
-  "sha256": "7c7c302799583299c6b42e67540f5f414c74ce764d4b1c318a8c2c38cc4015d1",
+  "version": "0.3.1",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.1.zip",
+  "sha256": "aec12ba89c5397568d4ee678ad7b38935961ea5944beb948e2a2eec63f37eee6",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
-  "released": "2026-10-22",
-  "changelog": "<p>0.3.0: Elementor-ondersteuning: teksten en beelden in Elementor-pagina's lezen en wijzigen (met terugdraaien), Elementor-pagina als concept kopiëren met dezelfde opmaak</p>"
+  "released": "2026-10-23",
+  "changelog": "<p>0.3.1: Backslashes in inhoud, schema en SEO-velden blijven behouden bij opslaan en terugdraaien (wp_slash)</p>"
 }

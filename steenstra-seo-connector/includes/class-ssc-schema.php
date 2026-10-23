@@ -25,7 +25,7 @@ class SSC_Schema {
 		if ( is_wp_error( $clean ) ) {
 			return $clean;
 		}
-		update_post_meta( $post_id, self::META_KEY, $clean );
+		update_post_meta( $post_id, self::META_KEY, wp_slash( $clean ) ); // update_post_meta doet wp_unslash
 		return true;
 	}
 

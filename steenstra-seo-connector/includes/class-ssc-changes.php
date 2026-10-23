@@ -195,7 +195,8 @@ class SSC_Changes {
 				return is_wp_error( $r ) ? $r : true;
 			case 'content':
 				// wp_update_post filtert HTML volgens de rechten van de API-gebruiker (geen scripts).
-				$r = wp_update_post( array( 'ID' => $post_id, 'post_content' => (string) $value ), true );
+				// wp_update_post haalt slashes weg (wp_unslash): eerst wp_slash, anders verdwijnen backslashes in blok-JSON.
+				$r = wp_update_post( wp_slash( array( 'ID' => $post_id, 'post_content' => (string) $value ) ), true );
 				return is_wp_error( $r ) ? $r : true;
 			case 'acf':
 				return SSC_ACF::set( $field, $value, $post_id );

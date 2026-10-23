@@ -88,7 +88,7 @@ class SSC_SEO {
 			delete_post_meta( $post_id, $meta_key );
 		} else {
 			$value = 'canonical' === $field ? esc_url_raw( (string) $value ) : sanitize_text_field( (string) $value );
-			update_post_meta( $post_id, $meta_key, $value );
+			update_post_meta( $post_id, $meta_key, wp_slash( $value ) );
 		}
 
 		self::refresh( $post_id );
