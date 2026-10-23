@@ -194,9 +194,7 @@ class SSC_Changes {
 				$r = wp_update_post( array( 'ID' => $post_id, 'post_title' => sanitize_text_field( (string) $value ) ), true );
 				return is_wp_error( $r ) ? $r : true;
 			case 'content':
-				// wp_update_post filtert HTML volgens de rechten van de API-gebruiker (geen scripts).
-				// wp_update_post haalt slashes weg (wp_unslash): eerst wp_slash, anders verdwijnen backslashes in blok-JSON.
-				$r = wp_update_post( wp_slash( array( 'ID' => $post_id, 'post_content' => (string) $value ) ), true );
+				$r = self::save_post( array( 'ID' => $post_id, 'post_content' => (string) $value ) );
 				return is_wp_error( $r ) ? $r : true;
 			case 'acf':
 				return SSC_ACF::set( $field, $value, $post_id );
@@ -218,6 +216,56 @@ class SSC_Changes {
 				return SSC_Elementor::set( $post_id, $field, $value );
 		}
 		return new WP_Error( 'ssc_type', 'Onbekend wijzigingstype.', array( 'status' => 400 ) );
+	}
+
+	/**
+	 * Bericht opslaan (bijwerken of nieuw) met behoud van JSON-LD-scripts in de inhoud.
+	 *
+	 * WordPress filtert bij opslaan alle HTML volgens de rechten van de API-gebruiker; zonder unfiltered_html
+	 * verdwijnt een <script type="application/ld+json"> (FAQ-schema in een HTML-blok) en blijft de JSON als tekst
+	 * op de pagina staan. Hier gaat de inhoud nog steeds door wp_kses_post, maar JSON-LD-scripts worden vooraf
+	 * apart gezet en daarna teruggeplaatst. Andere scripts worden geweigerd. wp_slash: wp_update_post/wp_insert_post
+	 * doen wp_unslash, anders verdwijnen backslashes in blok-JSON.
+	 *
+	 * @return int|WP_Error post-ID
+	 */
+	public static function save_post( array $postarr ) {
+		$content = isset( $postarr['post_content'] ) ? (string) $postarr['post_content'] : '';
+		$scripts = array();
+		$error   = null;
+		$masked  = preg_replace_callback(
+			'#<script\b([^>]*)>(.*?)</script\s*>#is',
+			function ( $m ) use ( &$scripts, &$error ) {
+				if ( ! preg_match( '#\btype\s*=\s*["\']application/ld\+json["\']#i', $m[1] ) ) {
+					$error = new WP_Error( 'ssc_script', 'Alleen JSON-LD-scripts (type="application/ld+json") zijn toegestaan in de inhoud.', array( 'status' => 400 ) );
+				} elseif ( null === json_decode( trim( $m[2] ) ) ) {
+					$error = new WP_Error( 'ssc_script_json', 'Een JSON-LD-script in de inhoud bevat geen geldige JSON.', array( 'status' => 400 ) );
+				}
+				$key             = '<!-- ssc-jsonld-' . count( $scripts ) . ' -->';
+				$scripts[ $key ] = '<script type="application/ld+json">' . trim( $m[2] ) . '</script>';
+				return $key;
+			},
+			$content
+		);
+		if ( $error ) {
+			return $error;
+		}
+		if ( preg_match( '#<script\b#i', $masked ) ) {
+			return new WP_Error( 'ssc_script', 'Onvolledige script-tag in de inhoud.', array( 'status' => 400 ) );
+		}
+		$kses = false;
+		if ( $scripts ) {
+			$postarr['post_content'] = strtr( wp_kses_post( $masked ), $scripts );
+			$kses                    = false !== has_filter( 'content_save_pre', 'wp_filter_post_kses' );
+			if ( $kses ) {
+				kses_remove_filters();
+			}
+		}
+		$r = empty( $postarr['ID'] ) ? wp_insert_post( wp_slash( $postarr ), true ) : wp_update_post( wp_slash( $postarr ), true );
+		if ( $kses ) {
+			kses_init_filters();
+		}
+		return $r;
 	}
 
 	/** Voor nieuwe conceptpagina's: direct schrijven zonder voorstel (concept staat niet live). */

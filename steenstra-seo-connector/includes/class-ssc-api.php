@@ -232,7 +232,7 @@ class SSC_API {
 			}
 			$postarr['page_template'] = $p['template'];
 		}
-		$post_id = wp_insert_post( wp_slash( $postarr ), true ); // wp_insert_post doet wp_unslash
+		$post_id = SSC_Changes::save_post( $postarr ); // behoudt JSON-LD-scripts, doet wp_slash
 		if ( is_wp_error( $post_id ) ) {
 			return $post_id;
 		}

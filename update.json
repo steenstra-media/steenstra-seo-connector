@@ -1,10 +1,10 @@
 {
-  "version": "0.3.1",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.1.zip",
-  "sha256": "aec12ba89c5397568d4ee678ad7b38935961ea5944beb948e2a2eec63f37eee6",
+  "version": "0.3.2",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.2.zip",
+  "sha256": "327f5b33f9e247038c61fe5a3949ed15fc7f2ddff847fc8b21c84f8a3c29bb34",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
   "released": "2026-10-23",
-  "changelog": "<p>0.3.1: Backslashes in inhoud, schema en SEO-velden blijven behouden bij opslaan en terugdraaien (wp_slash)</p>"
+  "changelog": "<p>0.3.2: FAQ-schema (JSON-LD-script) in de inhoud blijft behouden bij opslaan en terugdraaien; andere scripts worden geweigerd</p>"
 }
