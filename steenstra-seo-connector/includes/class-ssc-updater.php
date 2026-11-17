@@ -40,7 +40,7 @@ class SSC_Updater {
 			if ( ! is_wp_error( $json ) && ! is_wp_error( $sig ) && 200 === wp_remote_retrieve_response_code( $json ) && 200 === wp_remote_retrieve_response_code( $sig ) ) {
 				$body      = wp_remote_retrieve_body( $json );
 				$signature = base64_decode( trim( wp_remote_retrieve_body( $sig ) ), true );
-				$key       = base64_decode( SSC_PUBLIC_KEY, true );
+				$key       = base64_decode( SSC_UPDATE_PUBLIC_KEY, true ); // alleen de update-sleutel, nooit de aanvraag-sleutel
 				if ( $signature && 64 === strlen( $signature ) && sodium_crypto_sign_verify_detached( $signature, $body, $key ) ) {
 					$data = json_decode( $body, true );
 					if ( is_array( $data ) && ! empty( $data['version'] ) && ! empty( $data['package'] ) && ! empty( $data['sha256'] )

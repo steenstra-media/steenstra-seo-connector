@@ -1,10 +1,10 @@
 {
-  "version": "0.3.4",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.4.zip",
-  "sha256": "0e7b745f4581b0a6751dd60d7fd40fe11e2876f1e3ef1f06e91ebc186ab010b9",
+  "version": "0.3.5",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.5.zip",
+  "sha256": "7ae367bd900c3ca7e26b2dedbaabca1a623cbd85dce0ec12607acb88c25a638d",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
   "released": "2026-11-17",
-  "changelog": "<p>0.3.4: Beveiliging: ACF-velden worden gefilterd (geen scripts, on…-attributen of javascript:-links; YouTube/Vimeo/Maps-iframes en opmaak blijven). Getest op 125 echte velden van 6 klantsites: inhoud ongewijzigd</p>"
+  "changelog": "<p>0.3.5: Beveiliging: aparte sleutel voor plugin-updates (de sleutel voor aanvragen kan geen updates meer ondertekenen); sleutel-vingerafdrukken in /status</p>"
 }

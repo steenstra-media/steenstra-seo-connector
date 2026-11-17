@@ -58,6 +58,8 @@ class SSC_API {
 		$theme = wp_get_theme();
 		return array(
 			'connector_version' => SSC_VERSION,
+			'key_fingerprint'   => substr( hash( 'sha256', SSC_PUBLIC_KEY ), 0, 12 ),
+			'update_key_fingerprint' => substr( hash( 'sha256', SSC_UPDATE_PUBLIC_KEY ), 0, 12 ),
 			'site'              => home_url(),
 			'name'              => get_bloginfo( 'name' ),
 			'language'          => get_locale(),

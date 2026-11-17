@@ -2,7 +2,7 @@
 /**
  * Plugin Name:       Steenstra SEO Connector
  * Description:       Beveiligde API-koppeling voor SEO-beheer door Steenstra Media: pagina's, ACF-bouwblokken, SEO-titels en -omschrijvingen, schema en media. Alleen ondertekende aanvragen worden geaccepteerd.
- * Version:           0.3.4
+ * Version:           0.3.5
  * Author:            Steenstra Media
  * Author URI:        https://www.steenstramedia.nl/
  * Requires at least: 6.0
@@ -27,7 +27,7 @@ if ( version_compare( PHP_VERSION, '7.4', '<' ) || ! function_exists( 'sodium_cr
 	return;
 }
 
-define( 'SSC_VERSION', '0.3.4' );
+define( 'SSC_VERSION', '0.3.5' );
 define( 'SSC_FILE', __FILE__ );
 define( 'SSC_DIR', plugin_dir_path( __FILE__ ) );
 
@@ -36,6 +36,8 @@ define( 'SSC_DIR', plugin_dir_path( __FILE__ ) );
  * bij Steenstra Media. Een nieuwe sleutel = een nieuwe plugin-versie.
  */
 define( 'SSC_PUBLIC_KEY', '+TRniQ2/v/HltwsJmP02cYxrJCXiXdkuNafUQLaom5w=' );
+// Aparte sleutel voor plugin-updates (sinds 0.3.5). De sleutel voor aanvragen kan zo nooit een update ondertekenen.
+define( 'SSC_UPDATE_PUBLIC_KEY', 'DipKjV1hs3LdONUTEGLGpvoOpl9Y/dzKRLpZt6QffRQ=' );
 
 define( 'SSC_USER_LOGIN', 'steenstra-seo' );
 define( 'SSC_ROLE', 'steenstra_seo' );
