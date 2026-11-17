@@ -1,10 +1,10 @@
 {
-  "version": "0.3.3",
-  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.3.zip",
-  "sha256": "899908ea84fdb40e09d26b1a66bb7d0dcc2bc381854749e99d797e4d34f18b09",
+  "version": "0.3.4",
+  "package": "https://raw.githubusercontent.com/steenstra-media/steenstra-seo-connector/main/releases/steenstra-seo-connector-0.3.4.zip",
+  "sha256": "0e7b745f4581b0a6751dd60d7fd40fe11e2876f1e3ef1f06e91ebc186ab010b9",
   "requires": "6.0",
   "requires_php": "7.4",
   "tested": "7.1",
-  "released": "2026-10-23",
-  "changelog": "<p>0.3.3: Elementor-kopie (elementor_from) neemt ook de pagina-instellingen van het thema over (Astra: indeling, titel, zijbalk, transparante header; ook GeneratePress, Kadence, OceanWP)</p>"
+  "released": "2026-11-17",
+  "changelog": "<p>0.3.4: Beveiliging: ACF-velden worden gefilterd (geen scripts, on…-attributen of javascript:-links; YouTube/Vimeo/Maps-iframes en opmaak blijven). Getest op 125 echte velden van 6 klantsites: inhoud ongewijzigd</p>"
 }

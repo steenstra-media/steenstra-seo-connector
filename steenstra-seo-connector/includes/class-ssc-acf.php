@@ -108,8 +108,53 @@ class SSC_ACF {
 		if ( ! $key ) {
 			return new WP_Error( 'ssc_acf_field', 'ACF-veld niet gevonden voor deze pagina: ' . $selector, array( 'status' => 400 ) );
 		}
-		update_field( $key, $value, $post_id );
+		update_field( $key, self::clean( $value ), $post_id );
 		clean_post_cache( $post_id );
 		return true;
+	}
+
+	/** Toegestane iframe-bronnen (video's en kaarten); andere iframes worden verwijderd. */
+	const IFRAME_HOSTS = '/^https:\/\/(www\.)?(youtube\.com|youtube-nocookie\.com|player\.vimeo\.com|google\.com\/maps|maps\.google\.com)/i';
+
+	/**
+	 * ACF slaat HTML ongefilterd op. Wij filteren zelf, recursief (herhaal- en flexibele velden):
+	 * - tekst zonder HTML blijft precies zoals hij is (geen &amp;-omzetting in gewone tekstvelden);
+	 * - tekst met HTML gaat door wp_kses (berichtniveau + video/kaart-iframes): geen scripts, geen on…-attributen;
+	 * - links met javascript:, data: of vbscript: worden leeggemaakt.
+	 */
+	public static function clean( $value ) {
+		if ( is_array( $value ) ) {
+			foreach ( $value as $k => $v ) {
+				$value[ $k ] = self::clean( $v );
+			}
+			return $value;
+		}
+		if ( ! is_string( $value ) ) {
+			return $value;
+		}
+		if ( preg_match( '/^\s*(javascript|data|vbscript)\s*:/i', $value ) ) {
+			return '';
+		}
+		if ( ! preg_match( '/<[a-z!\/]/i', $value ) ) { // geen echte HTML-tag: tekst ongewijzigd laten
+			return $value;
+		}
+		$allowed           = wp_kses_allowed_html( 'post' );
+		$allowed['iframe'] = array( 'src' => true, 'width' => true, 'height' => true, 'frameborder' => true, 'allow' => true, 'allowfullscreen' => true, 'loading' => true, 'title' => true, 'style' => true, 'referrerpolicy' => true, 'class' => true );
+		// Opmaak die wij (tabellen) en thema's gebruiken mag blijven; WordPress laat deze standaard niet toe.
+		$css   = function ( $props ) { return array_merge( $props, array( 'overflow', 'overflow-x', 'overflow-y', 'min-width', 'max-width', 'min-height', 'max-height', 'white-space', 'vertical-align', 'border-collapse', 'border-spacing', 'display', 'object-fit', 'aspect-ratio', 'gap', 'flex', 'flex-wrap', 'justify-content', 'align-items', 'list-style', 'list-style-type', 'opacity', 'position', 'top', 'left', 'right', 'bottom', 'z-index', 'transform', 'box-shadow', 'text-transform', 'letter-spacing', 'word-break', 'overflow-wrap', 'hyphens' ) ); };
+		// Kleurfuncties als rgba(255,255,255,.55) toestaan (alleen getallen tussen de haakjes, dus geen url() of expression()).
+		$kleur = function ( $allow, $test ) { return $allow || (bool) preg_match( '/^[^()]*((rgba?|hsla?)\([\d\s.,%\/]+\)[^()]*)+$/i', (string) $test ); };
+		add_filter( 'safe_style_css', $css );
+		add_filter( 'safecss_filter_attr_allow_css', $kleur, 10, 2 );
+		$clean = wp_kses( $value, $allowed );
+		remove_filter( 'safe_style_css', $css );
+		remove_filter( 'safecss_filter_attr_allow_css', $kleur, 10 );
+		return preg_replace_callback(
+			'/<iframe\b[^>]*>.*?<\/iframe>|<iframe\b[^>]*\/?>/is',
+			function ( $m ) {
+				return preg_match( '/\ssrc=["\']([^"\']+)/i', $m[0], $src ) && preg_match( self::IFRAME_HOSTS, $src[1] ) ? $m[0] : '';
+			},
+			$clean
+		);
 	}
 }
